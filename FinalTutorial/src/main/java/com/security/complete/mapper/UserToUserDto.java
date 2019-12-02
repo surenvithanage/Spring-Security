@@ -4,6 +4,7 @@ import com.security.complete.dto.RoleDto;
 import com.security.complete.dto.UserDto;
 import com.security.complete.mapping.Role;
 import com.security.complete.mapping.User;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
  * Date : 12/2/2019
  * Time : 4:47 PM
  */
+@Component
 public class UserToUserDto {
 
     private RoleDto roleToRoleDto(Role role) {

@@ -18,6 +18,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
@@ -35,7 +36,6 @@ import static com.security.complete.utility.Constant.*;
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private AuthenticationManager authenticationManager;
-
     private UserService userService;
 
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
@@ -55,15 +55,23 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         }
     }
 
-    protected void validateAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication auth) {
-        if(Objects.isNull(userService)) {
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication auth) throws IOException {
+        if (Objects.isNull(userService)) {
             ServletContext servletContext = request.getServletContext();
-            WebApplicationContext webApplicationContext = WebApplicationContextUtils.getWebApplicationContext(servletContext);
+            WebApplicationContext webApplicationContext = WebApplicationContextUtils
+                    .getWebApplicationContext(servletContext);
             userService = webApplicationContext.getBean(UserService.class);
         }
-        String username = ((org.springframework.security.core.userdetails.User)auth.getPrincipal()).getUsername();
-        String token = JWT.create().withSubject(username).withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .sign(HMAC512(SECRET.getBytes()));
-        response.setHeader(HEADER_STRING, TOKEN_PREFIX + token);
+
+        PrintWriter out = response.getWriter();
+        String userEmail = ((org.springframework.security.core.userdetails.User) auth.getPrincipal()).getUsername();
+
+        String token = JWT.create().withSubject(((org.springframework.security.core.userdetails.User) auth.getPrincipal()).getUsername())
+                .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME)).sign(HMAC512(SECRET.getBytes()));
+        response.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
+
+        // out.print(gson.toJson(userService.getUserByEmail(userEmail)));
+        out.print(userEmail);
+        out.flush();
     }
 }

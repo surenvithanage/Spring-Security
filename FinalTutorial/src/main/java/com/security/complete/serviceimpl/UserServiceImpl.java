@@ -1,5 +1,7 @@
 package com.security.complete.serviceimpl;
 
+import com.security.complete.dto.UserDto;
+import com.security.complete.mapper.UserToUserDto;
 import com.security.complete.mapping.User;
 import com.security.complete.repository.UserRepository;
 import com.security.complete.service.UserService;
@@ -10,6 +12,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Project complete
@@ -27,15 +32,33 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Autowired
+    private UserToUserDto userToUserDto;
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email);
         if ( user == null ) {
             throw new UsernameNotFoundException("User not found with the email : " + email);
         }
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),user.isEnabled(),true, true,true, null);
+        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),user.isEnabled(),true, true,true, new ArrayList<>());
     }
 
+    public UserDto insert(User user) {
+        User rUser = null;
+        try {
+            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+            user.setEnabled(true);
+            rUser = userRepository.save(user);
+        } catch (Exception e) {
+            throw e;
+        }
+        return userToUserDto.userToUserDto(rUser);
+    }
+
+    public List<UserDto> getAll() {
+        return userRepository.findAll().stream().map(user -> userToUserDto.userToUserDto(user)).collect(Collectors.toList());
+    }
 //    private Collection<? extends GrantedAuthority> getAuthorities(Collection<Role> roles) {
 //        return getGrantedAuthories(getPrivileges(roles));
 //    }

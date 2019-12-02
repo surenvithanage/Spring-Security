@@ -1,12 +1,12 @@
 package com.security.complete.config;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.logging.Logger;
 
 /**
  * Project complete
@@ -15,8 +15,13 @@ import java.util.logging.Logger;
  * Time : 3:22 PM
  */
 @Component
-public class CorsFilter implements Filter {
-    private final Logger logger = (Logger) LoggerFactory.getLogger(CorsFilter.class);
+public class AcsCorsFilter implements Filter {
+    private final Logger logger = LoggerFactory.getLogger(AcsCorsFilter.class);
+
+    public AcsCorsFilter() {
+        logger.info("Cors Filter Initializer");
+    }
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 
