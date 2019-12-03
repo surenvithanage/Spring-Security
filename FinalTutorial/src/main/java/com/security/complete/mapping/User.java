@@ -37,7 +37,7 @@ public class User implements java.io.Serializable {
 	private Long channel;
 	private String pushId;
 	private String loginIdType;
-	private String email;
+	private String username;
 	private boolean isEnabled;
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "role_id"))
@@ -56,11 +56,11 @@ public class User implements java.io.Serializable {
 	 * @param channel
 	 * @param pushId
 	 * @param loginIdType
-	 * @param email
+	 * @param username
 	 * @param roles
 	 */
 	public User(Long userId, String loginId, String password, Date createdtime, String name, String mobile,
-			Long channel, String pushId, String loginIdType, String email, boolean isEnabled, List<Role> roles) {
+			Long channel, String pushId, String loginIdType, String username, boolean isEnabled, List<Role> roles) {
 		super();
 		this.userId = userId;
 		this.loginId = loginId;
@@ -71,7 +71,7 @@ public class User implements java.io.Serializable {
 		this.channel = channel;
 		this.pushId = pushId;
 		this.loginIdType = loginIdType;
-		this.email = email;
+		this.username = username;
 		this.isEnabled = isEnabled;
 		this.roles = roles;
 	}
@@ -173,18 +173,18 @@ public class User implements java.io.Serializable {
 	}
 
 	/**
-	 * @return the email
+	 * @return the username
 	 */
-	public String getEmail() {
-		return email;
+	public String getUsername() {
+		return username;
 	}
 
 	/**
-	 * @param email
+	 * @param username
 	 *            the email to set
 	 */
-	public void setEmail(String email) {
-		this.email = email;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	/**

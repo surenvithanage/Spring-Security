@@ -1,6 +1,7 @@
 package com.security.complete.security;
 
-
+import com.security.complete.handler.CustomAccessDeniedHandler;
+import com.security.complete.handler.CustomAuthenticationEntryPoint;
 import com.security.complete.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +25,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
+    private CustomAuthenticationEntryPoint unauthorizedHandler;
+
+    @Autowired
+    private CustomAccessDeniedHandler accessDeniedHandler;
+
+    @Autowired
     public WebSecurity(UserService usersService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userService = usersService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -34,12 +41,14 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         httpSecurity.cors();
         httpSecurity.csrf().disable().authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/login", "/user/register").permitAll()
-                .antMatchers(HttpMethod.GET,"/swagger-ui.html")
-                .permitAll().anyRequest()
-                .authenticated()
-                .and()
+                .antMatchers(HttpMethod.GET, "/v2/api-docs", "/configuration/ui", "/swagger-resources/**",
+                        "/configuration/security", "/swagger-ui.html", "/webjars/**")
+                .permitAll().anyRequest().authenticated().and()
                 .addFilter(new JwtAuthorizationFilter(authenticationManager()))
                 .addFilter(new JwtAuthenticationFilter(authenticationManager()));
+//                .exceptionHandling()
+//                .authenticationEntryPoint(unauthorizedHandler)
+//                .accessDeniedHandler(accessDeniedHandler);
     }
 
     @Override

@@ -2,9 +2,9 @@ package com.security.complete.security;
 
 import com.auth0.jwt.JWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.security.complete.mapping.User;
 import com.security.complete.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -48,7 +48,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         try {
             User credentials = new ObjectMapper().readValue(request.getInputStream(), User.class);
             return authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(credentials.getEmail(), credentials.getPassword(), new ArrayList<>())
+                    new UsernamePasswordAuthenticationToken(credentials.getUsername(), credentials.getPassword(), new ArrayList<>())
             );
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -62,7 +62,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                     .getWebApplicationContext(servletContext);
             userService = webApplicationContext.getBean(UserService.class);
         }
-
+        Gson gson = new Gson();
         PrintWriter out = response.getWriter();
         String userEmail = ((org.springframework.security.core.userdetails.User) auth.getPrincipal()).getUsername();
 
@@ -70,8 +70,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME)).sign(HMAC512(SECRET.getBytes()));
         response.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
 
-        // out.print(gson.toJson(userService.getUserByEmail(userEmail)));
-        out.print(userEmail);
+        out.print(gson.toJson(auth.getPrincipal()));
+
         out.flush();
     }
 }

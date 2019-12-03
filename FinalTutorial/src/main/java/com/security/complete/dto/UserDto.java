@@ -19,7 +19,7 @@ public class UserDto {
     private Long channel;
     private String pushId;
     private String loginIdType;
-    private String email;
+    private String username;
     private boolean isEnabled;
     private List<RoleDto> roles;
 
@@ -95,12 +95,12 @@ public class UserDto {
         this.loginIdType = loginIdType;
     }
 
-    public String getEmail() {
-        return email;
+    public String getUsername() {
+        return username;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public boolean isEnabled() {

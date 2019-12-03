@@ -31,7 +31,7 @@ public class UserToUserDto {
         UserDto userDto = new UserDto();
         userDto.setChannel(user.getChannel());
         userDto.setCreatedtime(user.getCreatedtime());
-        userDto.setEmail(user.getEmail());
+        userDto.setUsername(user.getUsername());
         userDto.setEnabled(user.isEnabled());
         userDto.setLoginId(user.getLoginId());
         userDto.setLoginIdType(user.getLoginIdType());
